@@ -20,7 +20,7 @@ exports.makeStruct = function (className, fields) {
 		    var fieldname = this.fields[i];
 		    console.log(fieldname + " is " + this.data[fieldname]);
 		}
-	    }
+	    };
 
 	    load_json(json) {
 		var jsonobj = JSON.parse(json);
@@ -29,11 +29,11 @@ exports.makeStruct = function (className, fields) {
 			this.set(key, jsonobj[key]);
 		    }
 		}
-	    }
+	    };
 
 	    get_json() {
-		return JSON.stringify(this.data);
-	    }
+		return JSON.stringify(this.data, null, 4);
+	    };
 
 	    // this silently discards fields not defined in the structure
 	    set(fieldname, value) {
@@ -42,7 +42,7 @@ exports.makeStruct = function (className, fields) {
 			this.data[fieldname] = value;
 		    }
 		}
-	    }
+	    };
 
 	    get(fieldname) {
 		for (var i = 0; i < this.fields.length; i++) {
@@ -51,7 +51,7 @@ exports.makeStruct = function (className, fields) {
 		    }
 		}
 		return "";
-	    }
+	    };
 		
 	}
     } else {
