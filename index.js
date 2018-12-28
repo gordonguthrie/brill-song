@@ -1,5 +1,6 @@
 var fs = require('fs');
 const classFactory = require('./struct');
+const arrayFactory = require('./array');
 //const compiler = require('./compiler');
 
 //
@@ -14,6 +15,7 @@ const classFactory = require('./struct');
 const titleFields = ["title"];
 const songwritersFields = ["songwriters"];
 const timingFields = ["bpm", "beats_to_the_bar"];
+const swingFields = ["swing"];
 
 //
 // generic version function
@@ -34,17 +36,19 @@ exports.open = function(dir, songwriters) {
     let Title = classFactory.makeStruct("title", titleFields);
     let Songwriters = classFactory.makeStruct("songwriters", songwritersFields);
     let Timing = classFactory.makeStruct("timing", timingFields);
-    
+    let Swing = classFactory.makeStruct("swing", swingFields);
+
     // define data elements
     song.is_valid = false;
     song.directory = dir;
     song.title = new Title("title");
     song.songwriters = new Songwriters("songwriters");
     song.timing = new Timing("timing");
-    
+    song.swing = new Swing("swing");
+
     // set the data we have
     song.songwriters.set("songwriters", songwriters);
-    
+
     // define api functions
     var dumpfn = function () {
 	console.log("dumping the current song****************");
@@ -71,13 +75,13 @@ exports.open = function(dir, songwriters) {
 	var title = make_ruby(song.title.get("title"));
 	write_file("/src/" + title, contents, ".rb");
     }
-    
+
     // bind the closures to the return object
     api.dump = dumpfn;
     api.get = getFn;
     api.set = setFn;
     api.compile = compileFn;
-    
+
     //
     // define internal functions
     //
@@ -119,7 +123,7 @@ exports.open = function(dir, songwriters) {
 	    .replace(/ /g, "_")
 	    .replace(/[^a-zA-Z0-9_]/g, "");
     };
-    
+
     var get_title = function () {
 	var segments = song.directory.split('/');
 	var length = segments.length;
@@ -127,7 +131,7 @@ exports.open = function(dir, songwriters) {
 	song.title.set("title", title);
 	return song.title.get_json();
     };
-    
+
     var create_title = function () {
 	var title = get_title();
 	write_file("title", title, ".brill");
@@ -142,14 +146,19 @@ exports.open = function(dir, songwriters) {
 	write_file("timing", song.timing.get_json(), ".brill");
     }
 
+    var create_swing = function () {
+	write_file("swing", song.swing.get_json(), ".brill");
+    }
+
     var create_src_dir = function () {
 	fs.mkdirSync(song.directory + "/src");
     }
-    
+
     var create_new = function () {
 	create_title();
 	create_songwriters();
 	create_timing();
+	create_swing();
 	// now make the compile output directory
 	create_src_dir();
 	song.is_valid = true;
@@ -158,28 +167,34 @@ exports.open = function(dir, songwriters) {
     var read_title = function () {
 	var json = read_file("title");
 	song.title.load_json(json);
-    }
+    };
 
     var read_songwriters = function () {
 	var json = read_file("songwriters");
 	song.songwriters.load_json(json);
-    }
+    };
 
     var read_timing = function () {
 	var json = read_file("timing");
 	song.timing.load_json(json);
-    }
-    
+    };
+
+    var read_swing = function () {
+	var json = read_file("swing");
+	song.swing.load_json(json);
+    };
+
     var read_song = function () {
 	read_title();
 	read_songwriters();
 	read_timing();
-    }
-    
+	read_swing();
+    };
+
     //
     // the main execution of the function
     //
-    
+
     // first we check if the song is valid
     // there are two initial criteria
     // * if the song directory doesn't exist we can create it and are good to go
@@ -191,20 +206,21 @@ exports.open = function(dir, songwriters) {
     } else {
 	read_song();
     };
-    
+
     return api;
 }
 
 exports.sandbox = function () {
-    let Banjo = classFactory.makeStruct("banjo", ["bobby", "jumpers"]);
-    var myclass = new Banjo("ergo");
-    var myobj = new Object();
-    myobj.bobby = "rando";
-    myobj.jumpers = "brando";
-    var json = JSON.stringify(myobj);
-    console.log("json is " + json);
-    myclass.dump();
-    myclass.load_json_into_class(json);
-    myclass.dump();
-    console.log(myclass.get_json());
+    let Banjo = arrayFactory.makeArray("banjo", ["bobby", "jumpers"]);
+    var myarray = new Banjo("ergo");
+    myarray.add("jimbo");
+    myarray.set("jimbo", "bobby", "lando");
+    myarray.set("jimbo", "jumpers", "wolfo");
+    myarray.add("limbo");
+    myarray.set("limbo", "bobby", "snotto");
+    myarray.set("limbo", "jumpers", "biggo");
+    var json = myarray.get_json();
+    var myarray2 = new Banjo("bibbo");
+    myarray2.load_json(json);
+    myarray2.dump();
 }
