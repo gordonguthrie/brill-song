@@ -15,7 +15,7 @@ const arrayFactory = require('./array');
 const titleFields = ["title"];
 const songwritersFields = ["songwriters"];
 const timingFields = ["bpm", "beats_to_the_bar"];
-const swingFields = ["swing"];
+const swingFields = ["swing", "emphasis"];
 
 //
 // generic version function
@@ -36,7 +36,7 @@ exports.open = function(dir, songwriters) {
     let Title = classFactory.makeStruct("title", titleFields);
     let Songwriters = classFactory.makeStruct("songwriters", songwritersFields);
     let Timing = classFactory.makeStruct("timing", timingFields);
-    let Swing = classFactory.makeStruct("swing", swingFields);
+    let Swing = arrayFactory.makeArray("swing", swingFields);
 
     // define data elements
     song.is_valid = false;
@@ -61,25 +61,53 @@ exports.open = function(dir, songwriters) {
     var getFn = function(component, field) {
 	var comp = song[component];
 	return comp.get(field);
-    }
+    };
 
+    var getArrayFn = function(component, key, field) {
+	var comp = song[component];
+	return comp.get(key, field);
+    };
+
+    var getWholeArrayFn = function(component, field) {
+	var comp = song[component];
+	return comp.data;
+    };
+
+    // push into a simple object
     var setFn = function(val, component, field) {
 	var comp = song[component];
 	comp.set(field, val);
 	write(component);
-    }
+    };
+
+    // push into an object in an array
+    var setArrayFn = function(val, component, key, field) {
+	var comp = song[component];
+	comp.set(key, field, val);
+	write(component);
+    };
+
+    var addFn = function (component, key) {
+	var comp = song[component];
+	comp.add(key);
+	write(component);
+    };
 
     var compileFn = function() {
 	console.log("compile the song into ruby");
 	var contents = "make contents";
 	var title = make_ruby(song.title.get("title"));
 	write_file("/src/" + title, contents, ".rb");
-    }
+    };
 
     // bind the closures to the return object
     api.dump = dumpfn;
     api.get = getFn;
+    api.arrayGet = getArrayFn;
+    api.getWholeArray = getWholeArrayFn;
     api.set = setFn;
+    api.arraySet = setArrayFn;
+    api.add = addFn;
     api.compile = compileFn;
 
     //
@@ -103,7 +131,12 @@ exports.open = function(dir, songwriters) {
 
     var write_file = function(filename, contents, filetype) {
 	var path = song.directory + "/" + filename + filetype;
-	fs.writeFile(path, contents, (err) => {
+	// need to trash the file before writing
+	// because the Node docs lie
+	if (fs.existsSync(path)) {
+	    fs.unlinkSync(path);
+	};
+	fs.writeFileSync(path, contents, (err) => {
 	    if(err) {
 		console.log("error writing file: " + path + " giving " + err.msg)
 	    }});
@@ -147,7 +180,8 @@ exports.open = function(dir, songwriters) {
     }
 
     var create_swing = function () {
-	write_file("swing", song.swing.get_json(), ".brill");
+	var contents = song.swing.get_json();
+	write_file("swing", contents, ".brill");
     }
 
     var create_src_dir = function () {
@@ -220,7 +254,9 @@ exports.sandbox = function () {
     myarray.set("limbo", "bobby", "snotto");
     myarray.set("limbo", "jumpers", "biggo");
     var json = myarray.get_json();
+    console.log(json);
     var myarray2 = new Banjo("bibbo");
-    myarray2.load_json(json);
-    myarray2.dump();
+    var json2 = myarray2.get_json();
+    console.log(json2);
+//    myarray2.dump();
 }

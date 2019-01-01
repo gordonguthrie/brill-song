@@ -21,7 +21,7 @@ exports.makeArray = function (className, fields) {
 
 	    load_json(json) {
 		var jsonobj = JSON.parse(json);
-		for (var f in jsonobj) {
+		for (var f in jsonobj[this.className]) {
 		    this.add(f);
 		    this.data[f].load_json(jsonobj[f]);
 		};
@@ -34,10 +34,12 @@ exports.makeArray = function (className, fields) {
 		var array = new Object();
 		for (var k in this.data) {
 		    if (this.data.hasOwnProperty(k)) {
-			array[k]=this.data[k].get_json();
+			array[k]=this.data[k].get_plain_obj();
 		    };
 		};
-		return JSON.stringify(array, null, 4);
+		var obj = new Object();
+		obj[this.objecttype] = array;
+		return JSON.stringify(obj, null, 4);
 	    };
 
 	    add(key) {
@@ -46,7 +48,7 @@ exports.makeArray = function (className, fields) {
 		    var myobj = new Obj(this.objecttype);
 		    this.data[key] = myobj;
 		} else {
-		    throw("key already exists");
+		    throw("in array/add key " + key + " already exists");
 		};
 	    };
 
@@ -54,7 +56,15 @@ exports.makeArray = function (className, fields) {
 		if (this.data[key] !== undefined) {
 		    this.data[key].set(fieldname, value);
 		} else {
-		    throw("key doesn't exist");
+		    throw("in array/set key " + key + " doesn't exist");
+		};
+	    };
+
+	    get_array(key) {
+		if (this.data[key] !== undefined) {
+		    return this.data[key];
+		} else {
+		    throw("in array/get_array key " + key + " doesn't exist");
 		};
 	    };
 
@@ -62,7 +72,7 @@ exports.makeArray = function (className, fields) {
 		if (this.data[key] !== undefined) {
 		    return this.data[key].get(fieldname);
 		} else {
-		    throw("key doesn't exist");
+		    throw("in array/get key " + key + " doesn't exist");
 		};
 	    };
 	}

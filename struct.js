@@ -35,13 +35,22 @@ exports.makeStruct = function (className, fields) {
 		return JSON.stringify(this.data, null, 4);
 	    };
 
-	    // this silently discards fields not defined in the structure
+	    // in arrays we need to get the raw object to make proper json
+	    get_plain_obj() {
+		return this.data;
+	    }
+
 	    set(fieldname, value) {
+		var wasset = false;
 		for (var i = 0; i < this.fields.length; i++) {
 		    if (this.fields[i] == fieldname) {
 			this.data[fieldname] = value;
+			wasset = true;
 		    }
 		}
+		if (!wasset) {
+		    throw("in struct/set key " + fieldname + "not valid");
+		};
 	    };
 
 	    get(fieldname) {
@@ -52,10 +61,9 @@ exports.makeStruct = function (className, fields) {
 		}
 		return "";
 	    };
-		
+
 	}
     } else {
 	throw("makeStruct takes an array of field names as an argument");
     }
 }
-
