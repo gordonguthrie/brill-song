@@ -4,12 +4,15 @@
   "description": "A data structured to describe a song for the Brill compiler used by the Brill editor as a GUI for the Sonic Pi sound system",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "mocha $(find test -name '*.js')"
   },
   "repository": {
     "type": "git",
     "url": "github.com:gordonguthrie/brill-song.git"
   },
   "author": "Gordon Guthrie",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
 }

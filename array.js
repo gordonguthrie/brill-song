@@ -13,17 +13,26 @@ exports.makeArray = function (className, fields) {
 	    };
 
 	    dump() {
-		console.log("Dumping array*****************");
-		console.log("dump " + this.name);
-		console.log(this);
-		console.log("******************************");
+		console.log("aaaaaaaaaaaaaaaaa starts");
+		console.log("array name " + this.name);
+		console.log("array contains things of type "
+			    + this.objecttype);
+		console.log("ooooooooooooooo starts");
+		for (var d in this.data) {
+		    this.data[d].dump();
+		};
+		console.log("ooooooooooooooo ends");
+		console.log("aaaaaaaaaaaaaaaaa end");
 	    };
 
 	    load_json(json) {
 		var jsonobj = JSON.parse(json);
-		for (var f in jsonobj[this.className]) {
-		    this.add(f);
-		    this.data[f].load_json(jsonobj[f]);
+		var type = this.objecttype;
+		var payload = jsonobj[type];
+		for (var p in payload) {
+		    this.add(p);
+		    var json = JSON.stringify(payload[p]);
+		    this.data[p].load_json(json);
 		};
 	    };
 
@@ -60,12 +69,8 @@ exports.makeArray = function (className, fields) {
 		};
 	    };
 
-	    get_array(key) {
-		if (this.data[key] !== undefined) {
-		    return this.data[key];
-		} else {
-		    throw("in array/get_array key " + key + " doesn't exist");
-		};
+	    get_array() {
+		return this.data;
 	    };
 
 	    get(key, fieldname) {

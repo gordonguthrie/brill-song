@@ -55,6 +55,8 @@ exports.open = function(dir, songwriters) {
 	console.log("directory   : " + song.directory);
 	song.title.dump();
 	song.songwriters.dump();
+	song.timing.dump();
+	song.swing.dump();
 	console.log("dump end********************************");
     };
 
@@ -68,9 +70,9 @@ exports.open = function(dir, songwriters) {
 	return comp.get(key, field);
     };
 
-    var getWholeArrayFn = function(component, field) {
+    var getWholeArrayFn = function(component) {
 	var comp = song[component];
-	return comp.data;
+	return comp.get_array();
     };
 
     // push into a simple object
