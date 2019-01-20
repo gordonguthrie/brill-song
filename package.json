@@ -4,7 +4,7 @@
   "description": "A data structured to describe a song for the Brill compiler used by the Brill editor as a GUI for the Sonic Pi sound system",
   "main": "index.js",
   "scripts": {
-    "test": "mocha $(find test -name 'array.js')"
+    "test": "mocha $(find test -name '*.js')"
   },
   "repository": {
     "type": "git",
