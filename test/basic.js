@@ -41,20 +41,29 @@ describe("get an empty variable (no arrays)", function () {
 });
 
 describe("set/get loop", function () {
-    it("should be able to set and get (no arrays)", function () {
+    it("should be able to set and get (no arrays) (1)", function () {
 	var sw = new Songwriters();
 	var val = "Gordon Guthrie";
 	var path = "songwriters";
-	sw.set(path, val);
-	got = sw.get(path);
-	assert.deepEqual(got, val);
+	set_get_fn(sw, path, val);
     });
-    it("should be able to set and get (no arrays) (2)", function () {
+    it("should be able to set and get (no arrays) (2a)", function () {
 	var sw = new Songwriters2();
 	var val = "Gordon Guthrie";
 	var path = "songwriters";
-	sw.set(path, val);
-	got = sw.get(path);
-	assert.deepEqual(got, val);
+	set_get_fn(sw, path, val);
+    });
+    it("should be able to set and get (no arrays) (2b)", function () {
+	var sw = new Songwriters2();
+	var val = "yardle";
+	var path = "bongo";
+	set_get_fn(sw, path, val);
     });
 });
+
+var set_get_fn = function (sw, path, val) {
+    // sw.dump();
+    sw.set(path, val);
+    got = sw.get(path);
+    assert.deepEqual(got, val);
+};

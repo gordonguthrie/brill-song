@@ -11,7 +11,6 @@ var arrayObj2 = new Object();
 arrayObj2.name = "refridgerator";
 arrayObj2.type = "bool";
 
-
 var object = new Object();
 object.name = "timing";
 object.type = "array";
@@ -34,7 +33,7 @@ describe("make a class with arrays", function () {
 describe("get an empty variable", function () {
     it("should get an empty string from an array (1)", function () {
 	var sw = new Hoopla();
-	var path = "lamport";
+	var path = "timing";
 	got = sw.get(path);
 	assert.deepEqual(got, "");
     });

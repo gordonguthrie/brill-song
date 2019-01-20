@@ -11,7 +11,6 @@ var arrayObj2 = new Object();
 arrayObj2.name = "refridgerator";
 arrayObj2.type = "bool";
 
-
 var object = new Object();
 object.name = "timing";
 object.type = "array";
@@ -37,12 +36,13 @@ describe("try and get a non-existent path (array funs)", function () {
     });
     it("should throw an exception (2)", function () {
 	var sw = new Hoopla();
-	var path = "lamport:hooboy:timing";
+	var path = "timing:hooboy:lamport";
 	try {
+	    sw.dump();
 	    got = sw.get(path);
 	    throw("should have thrown an exception (in this test)");
 	} catch(err) {
-	    assert.deepEqual(err, "No property hooboy at path 'lamport'");
+	    assert.deepEqual(err, "No property hooboy at path 'timing'");
 	};
     });
 });
