@@ -45,6 +45,21 @@ describe("ArrayType: create, add and get", function () {
     });
 });
 
+describe("ArrayType: create, add and get_array", function () {
+    it("single addition", function () {
+	var thing = new ArrayType("name", "key", "number");
+	var key1 = "bingo";
+	var val1 = 33;
+	var key2 = "bongo";
+	var val2 = 44;
+	thing.add(key1, val1);
+	thing.add(key2, val2);
+	var expected = [{bingo: 33}, {bongo: 44}];
+	var got = thing.get_array();
+	assert.deepEqual(got, expected);
+    });
+});
+
 describe("ArrayType: create, add and delete", function () {
     it("works after deletion", function () {
 	var thing = new ArrayType("name", "key", "number");

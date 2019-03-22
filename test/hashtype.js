@@ -82,8 +82,8 @@ describe("HashType: create, set and get arrays", function () {
 	var val1 = 33;
 	var key2 = "angela";
 	var val2 = false;
-	thing.add("array1", key1, val1);
-	thing.add("array2", key2, val2);
+	thing.set_array("array1", key1, val1);
+	thing.set_array("array2", key2, val2);
 	var got = thing.get_from_array("array2", key2);
 	assert.deepEqual(got, val2);
     });
@@ -105,15 +105,32 @@ describe("HashType: create, set and get_json", function () {
 	var val1 = 33;
 	var key2 = "angela";
 	var val2 = false;
-	thing.add("array1", key1, val1);
-	thing.add("array2", key2, val2);
-	expected = '{"objects":[{"key1":33},{"key2":"value2"},{"key3":true}],"arrays":[{"array1":{"bango":33}},{"array2":{"angela":false}}]}';
+	thing.set_array("array1", key1, val1);
+	thing.set_array("array2", key2, val2);
+	expected = '{"objects":[{"key1":33},{"key2":"value2"},{"key3":true}],"arrays":[{"array1":[{"bango":33}]},{"array2":[{"angela":false}]}]}';
 	var got = thing.get_json();
 	assert.deepEqual(got, expected);
     });
 });
 
 describe("HashType: create, set and get_json, create from json", function () {
+    it("basic create, set and get_json", function () {
+	var thing = new HashType("hash",
+				 [
+				 ],
+				 [
+				     ["array1", "bob", "number"],
+				     ["array2", "bill", "boolean"]
+				 ]);
+	thing.set_array("array1", "key1", 1);
+	thing.set_array("array1", "key2", 2);
+	thing.set_array("array1", "key3", 3);
+	thing.set_array("array2", "keya", false);
+	thing.set_array("array2", "keyb", true);
+	expected = '{"arrays":[{"array1":[{"key1":1},{"key2":2},{"key3":3}]},{"array2":[{"keya":false},{"keyb":true}]}]}';
+	var got = thing.get_json();
+	assert.deepEqual(got, expected);
+    });
     it("full json round trip", function () {
 	var objspec = [
 	    ["key1", 33, "number"],
@@ -125,15 +142,45 @@ describe("HashType: create, set and get_json, create from json", function () {
 	    ["array2", "bill", "boolean"]
 	];
 	var thing = new HashType("hash", objspec, arrayspec);
-	var key1 = "bango";
-	var val1 = 33;
-	var key2 = "angela";
-	var val2 = false;
 	thing.set("key1", 999);
 	thing.set("key2", "nine nine nine");
 	thing.set("key3", false);
-	thing.add("array1", key1, val1);
-	thing.add("array2", key2, val2);
+	thing.set_array("array1", "key11", 11);
+	thing.set_array("array1", "key22", 22);
+	thing.set_array("array1", "key33", 33);
+	thing.set_array("array2", "key_a", true);
+	thing.set_array("array2", "key_b", false);
+	thing.set_array("array2", "key_c", true);
+	var expected = thing.get_json();
+	var newthing = new HashType("hash", objspec, arrayspec);
+	newthing.from_json(expected);
+	var got = newthing.get_json();
+	assert.deepEqual(got, expected);
+    });
+    it("json round trip with empty arrays", function () {
+	var objspec = [
+	    ["key1", 33, "number"],
+	    ["key2", "value2", "string"],
+	    ["key3", true, "boolean"]
+	];
+	var arrayspec = [];
+	var thing = new HashType("hash", objspec, arrayspec);
+	thing.set("key1", 999);
+	thing.set("key2", "nine nine nine");
+	thing.set("key3", false);
+	var expected = thing.get_json();
+	var newthing = new HashType("hash", objspec, arrayspec);
+	newthing.from_json(expected);
+	var got = newthing.get_json();
+	assert.deepEqual(got, expected);
+    });
+    it("full json round trip with empty objects", function () {
+	var objspec = [];
+	var arrayspec = [
+	    ["array1", "bob", "number"],
+	    ["array2", "bill", "boolean"]
+	];
+	var thing = new HashType("hash", objspec, arrayspec);
 	var expected = thing.get_json();
 	var newthing = new HashType("hash", objspec, arrayspec);
 	newthing.from_json(expected);

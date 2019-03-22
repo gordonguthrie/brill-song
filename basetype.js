@@ -1,3 +1,5 @@
+// Do not call this directly - only indirectly via HashType
+
 var types = require("./types");
 
 exports.make = function () {
@@ -35,6 +37,11 @@ exports.make = function () {
 	    var obj = {};
 	    obj[this.key] = this.value;
 	    return obj;
+	};
+
+	dump() {
+	    console.log(this.key + ": " + this.value +
+			" (of type " + this.type + ")");
 	};
     };
 }

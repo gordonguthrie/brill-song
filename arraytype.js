@@ -1,3 +1,5 @@
+// Do not call this directly - only indirectly via HashType
+
 const types = require("./types");
 const arrayType = require('./arraytype');
 const baseType = require('./basetype');
@@ -10,9 +12,13 @@ exports.make = function () {
 	constructor (name, key, type) {
 
 	    if (typeof(name) !== "string") {
+		console.log("making an ArrayType takes a string as the 1st parameter");
+		console.log(name);
 		throw("making an ArrayType takes a string as the 1st parameter");
 	    };
 	    if (typeof(key) !== "string") {
+		console.log("making an ArrayType takes a string as the 2nd parameter");
+		console.log(key);
 		throw("making an ArrayType takes a string as the 2nd parameter");
 	    };
 
@@ -28,6 +34,8 @@ exports.make = function () {
 
 	add(key, value) {
 	    if (typeof(key) !== "string") {
+		console.log("adding an element to an ArrayType takes a string as the 1st parameter");
+		console.log(key);
 		throw("adding an element to an ArrayType takes a string as the 1st parameter");
 	    };
 	    this.checkType(value);
@@ -39,6 +47,8 @@ exports.make = function () {
 	    if (this.map.has(key)) {
 		return this.map.get(key).get();
 	    } else {
+		console.log("key " + key + " is not in the array");
+		console.log(this.map);
 		throw("key " + key + " is not in the array");
 	    };
 	};
@@ -47,6 +57,8 @@ exports.make = function () {
 	    if (this.map.has(key)) {
 		this.map.delete(key);
 	    } else {
+		console.log("key " + key + " is not in the array");
+		console.log(this.map);
 		throw("key " + key + " is not in the array");
 	    };
 	};
@@ -57,6 +69,22 @@ exports.make = function () {
 		objs[k] = this.map.get(k).get();
 	    };
 	    return objs;
+	};
+
+	get_array() {
+	    var array = [];
+	    for (const k of this.map.keys()) {
+		var obj = {};
+		obj[k] = this.map.get(k).get();
+		array.push(obj);
+	    };
+	    return array;
+	};
+
+	dump() {
+	    for (const k of this.map.keys()) {
+		this.map.get(k).dump();
+	    };
 	};
 
     };

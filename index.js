@@ -1,7 +1,8 @@
 var fs = require('fs');
-const classFactory = require('./struct');
-const arrayFactory = require('./array');
+const hashtype = require('./hashtype');
 //const compiler = require('./compiler');
+
+HashType = hashtype.make();
 
 //
 // Define constants
@@ -12,10 +13,6 @@ const arrayFactory = require('./array');
 //
 // These constants are arrays of field definitions
 //
-const titleFields = ["title"];
-const songwritersFields = ["songwriters"];
-const timingFields = ["bpm", "beats_to_the_bar"];
-const swingFields = ["swing", "emphasis"];
 
 //
 // generic version function
@@ -32,22 +29,27 @@ exports.open = function(dir, songwriters) {
     var song = {};
     var api = {};
 
-    // define some classes to contain information
-    let Title = classFactory.makeStruct("title", titleFields);
-    let Songwriters = classFactory.makeStruct("songwriters", songwritersFields);
-    let Timing = classFactory.makeStruct("timing", timingFields);
-    let Swing = arrayFactory.makeArray("swing", swingFields);
+    song.title = new HashType("title",
+			      [
+				  ["title", "", "string"]
+			      ], []);
+    song.songwriters = new HashType("songwriters",
+				    [
+					["songwriters", songwriters, "string"]
+				    ], []);
+    song.timing = new HashType("timing",
+			       [
+				   ["bpm", 120, "number"],
+				   ["beats_to_the_bar", 4, "number"]
+			       ],
+			       [
+				  ["swing", "swing", "number"],
+				  ["emphasis", "emphasis", "number"]
+			      ]);
 
     // define data elements
     song.is_valid = false;
     song.directory = dir;
-    song.title = new Title("title");
-    song.songwriters = new Songwriters("songwriters");
-    song.timing = new Timing("timing");
-    song.swing = new Swing("swing");
-
-    // set the data we have
-    song.songwriters.set("songwriters", songwriters);
 
     // define api functions
     var dumpfn = function () {
@@ -55,8 +57,6 @@ exports.open = function(dir, songwriters) {
 	console.log("directory   : " + song.directory);
 	song.title.dump();
 	song.songwriters.dump();
-	song.timing.dump();
-	song.swing.dump();
 	console.log("dump end********************************");
     };
 
@@ -70,9 +70,12 @@ exports.open = function(dir, songwriters) {
 	return comp.get(key, field);
     };
 
-    var getWholeArrayFn = function(component) {
+    var getWholeArrayFn = function(component, array) {
 	var comp = song[component];
-	return comp.get_array();
+	console.log("in getWholeArrayFn for " + component);
+	var whole = comp.get_array(array);
+	console.log(whole);
+	return whole;
     };
 
     // push into a simple object
@@ -83,9 +86,9 @@ exports.open = function(dir, songwriters) {
     };
 
     // push into an object in an array
-    var setArrayFn = function(val, component, key, field) {
+    var setArrayFn = function(component, field, key, val) {
 	var comp = song[component];
-	comp.set(key, field, val);
+	comp.set_array(field, key, val);
 	write(component);
     };
 
@@ -96,7 +99,6 @@ exports.open = function(dir, songwriters) {
     };
 
     var compileFn = function() {
-	console.log("compile the song into ruby");
 	var contents = "make contents";
 	var title = make_ruby(song.title.get("title"));
 	write_file("/src/" + title, contents, ".rb");
@@ -181,11 +183,6 @@ exports.open = function(dir, songwriters) {
 	write_file("timing", song.timing.get_json(), ".brill");
     }
 
-    var create_swing = function () {
-	var contents = song.swing.get_json();
-	write_file("swing", contents, ".brill");
-    }
-
     var create_src_dir = function () {
 	fs.mkdirSync(song.directory + "/src");
     }
@@ -194,7 +191,6 @@ exports.open = function(dir, songwriters) {
 	create_title();
 	create_songwriters();
 	create_timing();
-	create_swing();
 	// now make the compile output directory
 	create_src_dir();
 	song.is_valid = true;
@@ -202,29 +198,25 @@ exports.open = function(dir, songwriters) {
 
     var read_title = function () {
 	var json = read_file("title");
-	song.title.load_json(json);
+	song.title.from_json(json);
     };
 
     var read_songwriters = function () {
 	var json = read_file("songwriters");
-	song.songwriters.load_json(json);
+	song.songwriters.from_json(json);
     };
 
     var read_timing = function () {
 	var json = read_file("timing");
-	song.timing.load_json(json);
-    };
-
-    var read_swing = function () {
-	var json = read_file("swing");
-	song.swing.load_json(json);
+	console.log("read timing file for json");
+	console.log(json);
+	song.timing.from_json(json);
     };
 
     var read_song = function () {
 	read_title();
 	read_songwriters();
 	read_timing();
-	read_swing();
     };
 
     //

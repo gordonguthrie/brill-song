@@ -77,7 +77,7 @@ describe("HashType Fails: fail to add to an array", function () {
 	     it("try and add to non-existant array", function () {
 		 var testfn = function () {
 		     var thing = new HashType("name", [], [["array1", "key", "number"]]);
-		     thing.add("non-existant array", "key", 33);
+		     thing.set_array("non-existant array", "key", 33);
 		 };
 		 var expected = "there is no array called non-existant array";
 		 runner(testfn, expected);
