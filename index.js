@@ -72,9 +72,7 @@ exports.open = function(dir, songwriters) {
 
     var getWholeArrayFn = function(component, array) {
 	var comp = song[component];
-	console.log("in getWholeArrayFn for " + component);
 	var whole = comp.get_array(array);
-	console.log(whole);
 	return whole;
     };
 
@@ -208,8 +206,6 @@ exports.open = function(dir, songwriters) {
 
     var read_timing = function () {
 	var json = read_file("timing");
-	console.log("read timing file for json");
-	console.log(json);
 	song.timing.from_json(json);
     };
 
