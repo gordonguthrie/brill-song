@@ -12,7 +12,8 @@ describe("BaseType: create and get", function () {
     });
 });
 
-describe("BaseType: create, set then get", function () {    it("create, set then get", function () {
+describe("BaseType: create, set then get", function () {
+    it("create, set then get", function () {
 	var expected = 44;
 	var thing = new BaseType("bish", 44, "number");
 	thing.set(expected);
@@ -57,8 +58,8 @@ describe("BaseType: create and get type", function () {
     });
 });
 
-describe("BaseType: create and get json", function () {
-    it("create and get json", function () {
+describe("BaseType: create and get obj", function () {
+    it("create and get obj", function () {
 	var key = "bish";
 	var val = 44;
 	var thing = new BaseType(key, 33, "number");

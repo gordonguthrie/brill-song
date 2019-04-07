@@ -75,8 +75,8 @@ describe("ArrayType: create, add and delete", function () {
     });
 });
 
-describe("ArrayType: create, add and get_json", function () {
-    it("simple json", function () {
+describe("ArrayType: create, add and get_obj", function () {
+    it("simple get_obj", function () {
 	var thing = new ArrayType("name", "key", "number");
 	thing.add("rando", 55);
 	thing.add("bingo", 33);

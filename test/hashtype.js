@@ -111,6 +111,20 @@ describe("HashType: create, set and get_json", function () {
 	var got = thing.get_json();
 	assert.deepEqual(got, expected);
     });
+    it("basic create, set and get for composite", function () {
+	var obj = {};
+	obj.swing = 0;
+	obj.emphasis = 0;
+	var thing = new HashType("hash",
+				 [
+				     ["key1", obj, "timing"]
+				 ],
+				 [
+				 ]);
+	expected = '{"objects":[{"key1":{"swing":0,"emphasis":0}}]}';
+	var got = thing.get_json();
+	assert.deepEqual(got, expected);
+    });
 });
 
 describe("HashType: create, set and get_json, create from json", function () {
@@ -183,6 +197,22 @@ describe("HashType: create, set and get_json, create from json", function () {
 	var thing = new HashType("hash", objspec, arrayspec);
 	var expected = thing.get_json();
 	var newthing = new HashType("hash", objspec, arrayspec);
+	newthing.from_json(expected);
+	var got = newthing.get_json();
+	assert.deepEqual(got, expected);
+    });
+    it("json round trip with composite types", function () {
+	var obj = {};
+	obj.swing = 0;
+	obj.emphasis = 0;
+	var objspec = [["key1", obj, "timing"]];
+	var thing = new HashType("hash", objspec, []);
+	var newtiming = {};
+	newtiming.swing = 2;
+	newtiming.emphasis = .5;
+	thing.set("key1", newtiming);
+	var expected = thing.get_json();
+	var newthing = new HashType("hash", objspec, []);
 	newthing.from_json(expected);
 	var got = newthing.get_json();
 	assert.deepEqual(got, expected);
