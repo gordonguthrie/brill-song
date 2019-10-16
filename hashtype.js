@@ -3,7 +3,6 @@ const arrayType = require('./arraytype');
 
 var set2 = function (mythis, key, val) {
     var base = mythis.objs.get(key);
-    base.set(val);
     mythis.objs.set(key, base);
 };
 
@@ -71,11 +70,11 @@ exports.make = function () {
 	};
 
 	set_array(arrayname, key, val) {
-//	    console.log("in hashtype set_array");
-//	    console.log(this);
-//	    console.log(arrayname);
-//	    console.log(key);
-//	    console.log(val);
+	    console.log("in hashtype set_array");
+	    console.log(this);
+	    console.log(arrayname);
+	    console.log(key);
+	    console.log(val);
 	    add2(this, arrayname, key, val);
 	};
 

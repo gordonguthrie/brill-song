@@ -46,7 +46,6 @@ exports.open = function(dir, songwriters) {
 				  ["swing", "swing", "number"],
 				  ["emphasis", "emphasis", "number"]
 			      ]);
-
     // define data elements
     song.is_valid = false;
     song.directory = dir;
@@ -178,7 +177,8 @@ exports.open = function(dir, songwriters) {
     }
 
     var create_timing = function () {
-	write_file("timing", song.timing.get_json(), ".brill");
+	var timing = song.timing.get_json();
+	write_file("timing", timing, ".brill");
     }
 
     var create_src_dir = function () {
